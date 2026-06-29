@@ -13,7 +13,7 @@ The project is composed of three parts:
   the Dox9+ template following a well-established documentation
   process.
 
-Dox, Dox9+ and DoxOps are distributed under CC BY-SA 4.0 — see [LICENSE.md](./.dox/LICENSE.md).
+Dox, Dox9+ and DoxOps are distributed under CC BY-SA 4.0 — see [LICENSE.md](./LICENSE.md).
 
 ## Getting Started
 

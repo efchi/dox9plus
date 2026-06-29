@@ -2,10 +2,10 @@
 
 | | |
 |---|---|
-| **Version** | 1.7.6 |
+| **Version** | 1.8.0 |
 | **Keywords** | Technical Writing - Solution Design - Requirements Management - Enterprise Architecture - Information Management - Information Architecture - Knowledge Management - Six Thinking-Hats - Agile Architecture |
 
-**Dox** is an agile documentation framework that aims to establish meaningful conventions for writing specifications, enabling leaner solution design for both humans and machines.
+**Dox** is an agile documentation notation that aims to establish meaningful conventions for writing specifications, enabling leaner solution design for both humans and machines.
 
 Dox follows a convention-over-prescription principle, encouraging best practices rather than imposing formal rules. What makes it distinctive is the application of Edward de Bono's *Six Thinking Hats* method to information that emerges during the design process, making implicit perspectives explicit and surfacing bias in documentation.
 
@@ -174,29 +174,29 @@ For requirements, we use the **MoSCoW** method to express priority:
 
 1. **Must** and **must not**. The requirement is non-negotiable and must be satisfied. Constraints always fall in this category, but not every must-have is a constraint: some are deliberate design choices.
 
-	> **[FR] .M** The system must allow registered users to log in.
+	> **[FR !M]** The system must allow registered users to log in.
 
-	> **[FR] .M** The system must not allow unregistered users to log in.
+	> **[FR !M]** The system must not allow unregistered users to log in.
 
 2. **Should** or shall. Important and expected, but not critical. Should be satisfied if possible.
 
-	> **[FR] .S** The system shall allow users to reset their password.
+	> **[FR !S]** The system shall allow users to reset their password.
 
 3. **Could (C)**. Desirable but not necessary, nice-to-have. Could be satisfied if time and resources allow.
 
-	> **[FR] .C** The system could support single sign-on (SSO).
+	> **[FR !C]** The system could support single sign-on (SSO).
 
 4. **Wont (W)**. Explicitly out-of-scope for now, but may be reconsidered in the future.
 
-	> **[FR] .W** The system will not support offline mode in the first release.
+	> **[FR !W]** The system will not support offline mode in the first release.
 
 For other types of assertions, we may want to assign a score or weight denoting priority, importance, likelihood, confidence, etc.
 
-> **[O 1] .2** Use a local in-memory DB to store user data.
+> **[O !2]** Use a local in-memory DB to store user data.
 
-> **[O 2] .6** Use a SaaS DB to store user data.
+> **[O !6]** Use a SaaS DB to store user data.
 
-> **[O 3] .8** Use a cloud-based distributed DB to store user data.
+> **[O !8]** Use a cloud-based distributed DB to store user data.
 
 ### Notes on Priority Usage
 
@@ -204,11 +204,13 @@ For other types of assertions, we may want to assign a score or weight denoting 
 
 2. Use the symbol `?` to handle cases where priority is still under evaluation.
 
-	> **[FR Ux-Bio] .?** The application might allow users to log in via biometric authentication, but we are still discussing it for budget reasons.
+	> **[FR Ux-Bio ?]** The application might allow users to log in via biometric authentication, but we are still discussing it for budget reasons.
 
 3. Wont (W) helps to clearly identify the solution boundary during the design phase. Use it to communicate the scope of the project and to align stakeholder expectations.
 
-4. Again, there are no strict rules: use common sense to maximize meaning and effectiveness.
+4. A constraint should always be a Must (M). Use this heuristic to tell real constraints from ones which are actually choices.
+
+5. Again, there are no strict rules: use common sense to maximize meaning and effectiveness.
 
 ## Color
 
@@ -316,13 +318,13 @@ Once core FRs are established, the team moves to defining how to technically sat
 
 Formalizing assumptions into requirements is a design decision itself. These choices don't always need to be maintained inline in the spec, but they should be recorded in a changelog for traceability.
 
-> **[ABR]?** Our system is meant to solve the chicken and egg problem.
+> **[ABR ?]** Our system is meant to solve the chicken and egg problem.
 
 > **[Opn]** Validate assumption [ABR].
 
 > **[DBR]** On 1/1/2026 we decided to give up on the chicken and egg problem.
 
-> **[BR] .Wont** Solve the chicken and egg problem.
+> **[BR !W]** Solve the chicken and egg problem.
 
 ## Appendix C. Requirements Dimensions
 
@@ -330,21 +332,21 @@ In Dox, requirements are treated along three independent dimensions, across all 
 
 1. **Nature**. What does a requirement describe?
 
-	i. A behaviour or functionality (FR)
-	ii. A technical or architectural aspect (TR)
-	iii. A quality property or attribute (QR)
-	iv. A higher-level request from our organization (BR)
+	1. A behaviour or functionality (FR)
+	1. A technical or architectural aspect (TR)
+	1. A quality property or attribute (QR)
+	1. A higher-level request from our organization (BR)
 	
 2. **Ownership**. Who owns a requirement? Where is it located in the process? 
 	
-	i. Business stakeholders: *business requirement* (BR)
-	ii. Product designers and users: *product requirement* (PR)
-	iii. Developers, engineers and architects: *implementation requirement* (IR)
+	1. Business stakeholders: *business requirement* (BR)
+	1. Product designers and users: *product requirement* (PR)
+	1. Developers, engineers and architects: *implementation requirement* (IR)
 
 3. **Degree of freedom**. Was the requirement imposed or chosen?
 
-	i. Imposed. The requirement is a constraint (C)
-	ii. Chosen. The requirement is not a constraint, but an implicit or explicit decision made during the design process.
+	1. Imposed. The requirement is a constraint (C)
+	1. Chosen. The requirement is not a constraint, but an implicit or explicit decision made during the design process.
 
 For *business requirements*, (1.iv) and  (2.i) are essentially the same — that's why we tolerate the naming overlap — but in general the three dimensions are independent. 
 

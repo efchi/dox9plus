@@ -2,8 +2,8 @@
 
 | | |
 |---|---|
-| **Template Version** | 1.0.2 |
-| **Dox Version** | [Dox v1.7.6](./Dox.md) |
+| **Template Version** | 1.0.3 |
+| **Dox Version** | [Dox v1.8.0](./Dox.md) |
 
 ## Table of Contents
 
@@ -23,7 +23,7 @@ Dox9+ is primarily focused on the technical dimension of the solution. Business 
 
 The nine core chapters form the backbone of a complete solution design document. Additional chapters are available to extend the template when deeper coverage of specific concerns is needed. Moreover, we define a specification [maturity model](#appendix-a-maturity) to handle scenarios where more agility is required.
 
-Dox9+ is based on the Dox notation: type, priority, and color annotations should be used to add semantic value to assertions — see [Dox v1.7.6](./Dox.md) for the notation specification.
+Dox9+ is based on the Dox notation: type, priority, and color annotations should be used to add semantic value to assertions — see [Dox v1.8.0](./Dox.md) for the notation specification.
 
 Dox9+ is distributed under CC BY-SA 4.0 — see [LICENSE.md](./LICENSE.md) file.
 
@@ -37,7 +37,7 @@ Dox9+ is distributed under CC BY-SA 4.0 — see [LICENSE.md](./LICENSE.md) file.
 | **Team** | *Team Name* |
 | **SD Version** | *0.0.1* |
 | **SD Status** | *`Draft`* |
-| **Template Version** | *[Dox9+ v1.0.2](./Dox9+.md)* |
+| **Template Version** | *[Dox9+ v1.0.3](./Dox9+.md)* |
 | **Maturity Model** | *`Top-Down` `Bottom-Up`* |
 | **Current Maturity** | *Dox0* |
 | **Target Maturity** | *Dox9* |
@@ -179,11 +179,11 @@ Dox9+ is distributed under CC BY-SA 4.0 — see [LICENSE.md](./LICENSE.md) file.
 
 *Include the goals of the project as explicit assertions, along with the business requirements that define what the organization expects from the solution. Surface quality requirements that originate at the business level. Where possible, enrich requirements with explicit priority annotation, emphasizing what falls inside and what outside the scope of this solution.*
 
-> **[G 1] .M** *Example goal.*
+> **[G 1 !M]** *Example goal.*
 
-> **[BR 1] .S** *Example business requirement.*
+> **[BR 1 !S]** *Example business requirement.*
 
-> **[QBR 1] .C** *Example business quality requirement.*
+> **[QBR 1 !C]** *Example business quality requirement.*
 
 ## References
 
