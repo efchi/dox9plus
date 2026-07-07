@@ -36,12 +36,12 @@ workspace. Can be re-invoked later to restructure an existing one
 A folder named `solution-design/` (or a name provided by the user)
 containing:
 
-- `solution-design.md` (matching the folder name): the SD cover page,
+- `solution-design.dox.md` (matching the folder name): the SD cover page,
   placed at the same level as the folder, with header fields and Table
   of Contents linking to each chapter file. All relative links must
   point correctly to files inside the folder.
-- one `.md` file per chapter, named with its number, code, and title
-  (e.g. `01. OVE Overview.md`, `02. GLO Glossary.md`), providing
+- one `.dox.md` file per chapter, named with its number, code, and title
+  (e.g. `01. OVE Overview.dox.md`, `02. GLO Glossary.dox.md`), providing
   natural ordering in IDEs and file explorers.
 - an `adr/` subfolder for Architectural Decision Records
 - a `dbt/` subfolder for Technical Debt detail files
@@ -84,11 +84,11 @@ when the user opts for bottom-up ordering (see Steps).
    f. Whether a project description is available
       (`project-bootstrap.md` or free text)
 3. Create the target folder and subfolders: `adr/`, `dbt/`, `rsk/`.
-4. For each chapter to include, generate a `.md` file with the
+4. For each chapter to include, generate a `.dox.md` file with the
    appropriate numeric prefix, code, and title. Strip all placeholder
    content while preserving section headers, structural tables with
    empty rows, `:bulb:` callouts, and all compilation guidance text.
-5. Generate the cover page file (e.g. `solution-design.md`) at the
+5. Generate the cover page file (e.g. `solution-design.dox.md`) at the
    same level as the folder, containing: the SD header table
    (pre-filled if a project description was provided, otherwise left
    blank with the correct maturity model and level already set to
@@ -96,7 +96,7 @@ when the user opts for bottom-up ordering (see Steps).
    chapter file, and the Legend table. Chapters explicitly omitted
    appear in the ToC with `:x:` and no link.
 6. If a project description was provided, use it to draft a first
-   version of the Project Description section in `OVE.md`.
+   version of the Project Description section in `01. OVE Overview.dox.md`.
 7. Report to the user: list of files and folders created, maturity
    model selected, current maturity level (Dox0), and suggested next
    step (invoke the Solution-Designer or fill chapters

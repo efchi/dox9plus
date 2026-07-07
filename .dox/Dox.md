@@ -2,10 +2,9 @@
 
 | | |
 |---|---|
-| **Version** | 1.8.0 |
-| **Keywords** | Technical Writing - Solution Design - Requirements Management - Enterprise Architecture - Information Management - Information Architecture - Knowledge Management - Six Thinking-Hats - Agile Architecture |
+| **Version** | 1.8.1 |
 
-**Dox** is an agile documentation notation that aims to establish meaningful conventions for writing specifications, enabling leaner solution design for both humans and machines.
+**Dox** is a lean documentation notation that aims to establish meaningful conventions for writing specifications, enabling lightweight solution design for both humans and machines.
 
 Dox follows a convention-over-prescription principle, encouraging best practices rather than imposing formal rules. What makes it distinctive is the application of Edward de Bono's *Six Thinking Hats* method to information that emerges during the design process, making implicit perspectives explicit and surfacing bias in documentation.
 
@@ -174,29 +173,31 @@ For requirements, we use the **MoSCoW** method to express priority:
 
 1. **Must** and **must not**. The requirement is non-negotiable and must be satisfied. Constraints always fall in this category, but not every must-have is a constraint: some are deliberate design choices.
 
-	> **[FR !M]** The system must allow registered users to log in.
+	> **[FR .M]** The system must allow registered users to log in.
 
-	> **[FR !M]** The system must not allow unregistered users to log in.
+	> **[FR .M]** The system must not allow unregistered users to log in.
 
 2. **Should** or shall. Important and expected, but not critical. Should be satisfied if possible.
 
-	> **[FR !S]** The system shall allow users to reset their password.
+	> **[FR .S]** The system shall allow users to reset their password.
 
 3. **Could (C)**. Desirable but not necessary, nice-to-have. Could be satisfied if time and resources allow.
 
-	> **[FR !C]** The system could support single sign-on (SSO).
+	> **[FR .C]** The system could support single sign-on (SSO).
 
 4. **Wont (W)**. Explicitly out-of-scope for now, but may be reconsidered in the future.
 
-	> **[FR !W]** The system will not support offline mode in the first release.
+	> **[FR .W]** The system will not support offline mode in the first release.
 
 For other types of assertions, we may want to assign a score or weight denoting priority, importance, likelihood, confidence, etc.
 
-> **[O !2]** Use a local in-memory DB to store user data.
+> **[O .2]** Use a local in-memory DB to store user data.
 
-> **[O !6]** Use a SaaS DB to store user data.
+> **[O .6]** Use a SaaS DB to store user data.
 
-> **[O !8]** Use a cloud-based distributed DB to store user data.
+> **[O .8]** Use a cloud-based distributed DB to store user data.
+
+> **[Dbt .High]** Hardcoded API keys are to be removed ASAP.
 
 ### Notes on Priority Usage
 
@@ -324,7 +325,7 @@ Formalizing assumptions into requirements is a design decision itself. These cho
 
 > **[DBR]** On 1/1/2026 we decided to give up on the chicken and egg problem.
 
-> **[BR !W]** Solve the chicken and egg problem.
+> **[BR .W]** Solve the chicken and egg problem.
 
 ## Appendix C. Requirements Dimensions
 
