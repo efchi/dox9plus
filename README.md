@@ -36,3 +36,7 @@ The latest version is [Dox9+ v1.0.4](./.dox/Dox9+.md).
 **DoxOps** is the agentic process built around Dox9+: a set of skills that turn the template into a working framework for writing, maintaining, and validating Solution Design documentation, in support of developers and architects working in enterprise and non-enterprise contexts alike.
 
 See [DoxOps](./.dox/DoxOps.md) for a description of available agents and related process.
+
+## Writings
+
+- July 2026: *[Introducing Dox: a lean notation to guide solution design, inspired by Six Thinking Hats](./.pub/introducing-dox.md)* — [Hashnode](https://efchi.hashnode.dev/introducing-dox-a-lean-notation-to-guide-solution-design-inspired-by-six-thinking-hats)
