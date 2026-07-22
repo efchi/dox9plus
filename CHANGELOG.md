@@ -16,7 +16,7 @@ Dox, Dox9+, DoxOps and this repository itself all have separate versions. Change
 | Dox	 | 1.8.1 |
 | Dox9+  | 1.0.4 |
 | DoxOps | 0.5.1 |
-| Repo	 | 1.0.1 |
+| Repo	 | 1.0.2 |
 
 <!--
 For reference:
@@ -27,6 +27,14 @@ For reference:
 - Fixed for any bug fixes.
 - Security in case of vulnerabilities.
 -->
+
+## 2026-07-22
+
+### Repo 1.0.2
+
+#### Added
+
+- Added "Vibecoding BSJ" article; updated Writings section in README.md
 
 ## 2026-07-09
 
