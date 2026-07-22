@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BULLSHIT JOBS — Corporate Survival Sim</title>
+    <style>
+        :root {
+            --bg-deep: #1e1b4b;
+            --bg-panel: #3730a3;
+            --bg-panel-2: #4338ca;
+            --border: #818cf8;
+            --text: #ffffff;
+            --text-dim: #c7d2fe;
+            --gold: #fbbf24;
+            --danger: #f43f5e;
+            --good: #4ade80;
+            --neutral: #38bdf8;
+            --floor-a: #6366f1;
+            --floor-b: #4f46e5;
+        }
+
+        * {
+            box-sizing: border-box;
+            image-rendering: pixelated;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: var(--bg-deep);
+            font-family: 'Courier New', Consolas, monospace;
+            color: var(--text);
+            overflow: hidden;
+            user-select: none;
+        }
+
+        #app {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ---- Top ticker bar ---- */
+        #ticker {
+            background: var(--bg-panel);
+            border-bottom: 3px solid var(--border);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            z-index: 10;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+        }
+
+            #ticker .brand {
+                color: var(--gold);
+                font-weight: bold;
+                letter-spacing: 3px;
+                font-size: 18px;
+                text-shadow: 0 0 10px rgba(251,191,36,0.5);
+            }
+
+            #ticker .stats {
+                display: flex;
+                gap: 26px;
+                flex-wrap: wrap;
+                align-items: center;
+            }
+
+            #ticker .stat {
+                font-size: 15px;
+            }
+
+                #ticker .stat span {
+                    color: var(--text-dim);
+                    margin-right: 5px;
+                    font-size: 11px;
+                    letter-spacing: 1px;
+                }
+
+                #ticker .stat b {
+                    color: var(--text);
+                    font-size: 16px;
+                }
+
+                #ticker .stat.best b {
+                    color: var(--gold);
+                }
+
+            #ticker #flavor {
+                color: var(--text-dim);
+                font-style: italic;
+                font-size: 12px;
+                max-width: 32%;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+        /* ---- Canvas area ---- */
+        #canvasWrap {
+            position: relative;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+            background: var(--bg-deep);
+        }
+
+        /* ---- Hire toolbar (doubles as class legend) ---- */
+        #hireBar {
+            position: absolute;
+            left: 14px;
+            top: 14px;
+            min-width: 200px;
+            background: var(--bg-panel);
+            border: 2px solid var(--border);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 14px;
+            z-index: 5;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+        }
+
+            #hireBar .label {
+                color: var(--text-dim);
+                margin-bottom: 2px;
+                letter-spacing: 2px;
+                font-size: 12px;
+            }
+
+            #hireBar button {
+                background: var(--bg-panel-2);
+                color: var(--text);
+                border: 1px solid var(--border);
+                padding: 10px 12px;
+                font-family: inherit;
+                font-size: 14px;
+                cursor: pointer;
+                text-align: left;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                border-radius: 2px;
+                transition: transform 0.08s ease, background 0.12s ease;
+            }
+
+                #hireBar button .sw {
+                    width: 12px;
+                    height: 12px;
+                    flex: 0 0 auto;
+                    border: 1px solid rgba(0,0,0,0.4);
+                }
+
+                #hireBar button .name {
+                    flex: 1;
+                }
+
+                #hireBar button:hover:not(:disabled) {
+                    background: var(--border);
+                }
+
+                #hireBar button:active:not(:disabled) {
+                    transform: scale(0.94);
+                    background: var(--gold);
+                    color: #1e1b4b;
+                }
+
+                #hireBar button.pressed {
+                    animation: btnFlash 0.3s ease;
+                }
+
+        @keyframes btnFlash {
+            0% {
+                box-shadow: 0 0 0 0 rgba(251,191,36,0.75);
+            }
+
+            100% {
+                box-shadow: 0 0 0 12px rgba(251,191,36,0);
+            }
+        }
+
+        #hireBar button:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        #hireBar button.armed {
+            background: var(--good);
+            color: #0f2d1a;
+            border-color: var(--good);
+            box-shadow: 0 0 0 3px rgba(74,222,128,0.35);
+            animation: armedPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes armedPulse {
+            0%,100% {
+                box-shadow: 0 0 0 3px rgba(74,222,128,0.35);
+            }
+
+            50% {
+                box-shadow: 0 0 0 7px rgba(74,222,128,0.15);
+            }
+        }
+
+        #hireBar button.special {
+            margin-top: 4px;
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+            background: linear-gradient(90deg, rgba(251,191,36,0.16), transparent);
+        }
+
+            #hireBar button.special .cost {
+                color: var(--gold);
+                font-weight: bold;
+            }
+
+            #hireBar button.special:disabled .cost {
+                color: var(--text-dim);
+                font-weight: normal;
+            }
+
+        #hireBar button .cost {
+            color: var(--gold);
+        }
+
+        /* ---- Selected character panel ---- */
+        #charPanel {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            width: 230px;
+            background: var(--bg-panel);
+            border: 2px solid var(--border);
+            padding: 12px;
+            font-size: 12px;
+            display: none;
+            z-index: 5;
+        }
+
+            #charPanel h3 {
+                margin: 0 0 8px;
+                font-size: 13px;
+                letter-spacing: 1px;
+            }
+
+            #charPanel .row {
+                display: flex;
+                justify-content: space-between;
+                margin: 4px 0;
+                color: var(--text-dim);
+            }
+
+                #charPanel .row b {
+                    color: var(--text);
+                }
+
+            #charPanel .barOuter {
+                background: #000;
+                border: 1px solid var(--border);
+                height: 10px;
+                margin: 6px 0 10px;
+            }
+
+            #charPanel .barInner {
+                height: 100%;
+                background: var(--good);
+                transition: width 0.3s;
+            }
+
+                #charPanel .barInner.warn {
+                    background: var(--gold);
+                }
+
+                #charPanel .barInner.crit {
+                    background: var(--danger);
+                }
+
+            #charPanel button {
+                width: 100%;
+                margin-top: 4px;
+                background: var(--danger);
+                color: #fff;
+                border: none;
+                padding: 8px;
+                font-family: inherit;
+                font-size: 11px;
+                cursor: pointer;
+                letter-spacing: 0.5px;
+                transition: transform 0.08s ease;
+            }
+
+                #charPanel button:hover {
+                    filter: brightness(1.15);
+                }
+
+                #charPanel button:active {
+                    transform: scale(0.96);
+                }
+
+                #charPanel button.good {
+                    background: var(--good);
+                    color: #0f2d1a;
+                    margin-top: 10px;
+                }
+
+                    #charPanel button.good:disabled {
+                        opacity: 0.4;
+                        cursor: not-allowed;
+                        filter: none;
+                    }
+
+            #charPanel .tag {
+                display: inline-block;
+                padding: 2px 6px;
+                font-size: 10px;
+                letter-spacing: 1px;
+                border: 1px solid var(--border);
+                color: var(--text-dim);
+                margin-bottom: 6px;
+            }
+
+            #charPanel .burnoutFlag {
+                color: var(--danger);
+                font-weight: bold;
+            }
+
+        /* ---- Currency / staff panel (replaces the former legend) ---- */
+        #currencyPanel {
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            width: 200px;
+            background: var(--bg-panel);
+            border: 2px solid var(--border);
+            padding: 14px;
+            z-index: 5;
+            text-align: right;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+        }
+
+            #currencyPanel .cur-label {
+                color: var(--text-dim);
+                font-size: 11px;
+                letter-spacing: 2px;
+            }
+
+            #currencyPanel .cur-value {
+                font-size: 34px;
+                font-weight: bold;
+                line-height: 1.1;
+                margin: 2px 0 10px;
+                background: linear-gradient(180deg, #bbf7d0, #22c55e);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+                text-shadow: 0 0 14px rgba(74,222,128,0.35);
+                display: inline-block;
+            }
+
+                #currencyPanel .cur-value.flash-up {
+                    animation: bumpUp 0.4s ease;
+                }
+
+                #currencyPanel .cur-value.flash-down {
+                    animation: bumpDown 0.4s ease;
+                }
+
+        @keyframes bumpUp {
+            0% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+
+            40% {
+                transform: scale(1.16);
+                filter: brightness(1.6);
+            }
+
+            100% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+        }
+
+        @keyframes bumpDown {
+            0% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+
+            40% {
+                transform: scale(0.9);
+                filter: hue-rotate(-35deg) brightness(0.75);
+            }
+
+            100% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+        }
+
+        #currencyPanel .staff-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-top: 1px solid var(--border);
+            padding-top: 8px;
+            font-size: 13px;
+        }
+
+            #currencyPanel .staff-row span:first-child {
+                color: var(--text-dim);
+                letter-spacing: 1px;
+                font-size: 11px;
+            }
+
+            #currencyPanel .staff-row b {
+                color: var(--good);
+                font-size: 18px;
+            }
+
+        /* ---- Random event modal ---- */
+        #eventModal {
+            position: absolute;
+            inset: 0;
+            background: rgba(10,8,16,0.75);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 18;
+        }
+
+            #eventModal .event-box {
+                background: var(--bg-panel);
+                border: 2px solid var(--gold);
+                padding: 22px;
+                width: 340px;
+                max-width: 88%;
+                text-align: center;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            }
+
+            #eventModal .event-tag {
+                display: inline-block;
+                color: var(--gold);
+                border: 1px solid var(--gold);
+                font-size: 10px;
+                letter-spacing: 2px;
+                padding: 2px 8px;
+                margin-bottom: 10px;
+            }
+
+            #eventModal h2 {
+                margin: 0 0 8px;
+                font-size: 17px;
+                letter-spacing: 0.5px;
+            }
+
+            #eventModal p {
+                color: var(--text-dim);
+                font-size: 12px;
+                margin: 0 0 16px;
+                line-height: 1.5;
+            }
+
+            #eventModal .event-choices {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            #eventModal button {
+                background: var(--bg-panel-2);
+                color: var(--text);
+                border: 1px solid var(--border);
+                padding: 10px 12px;
+                font-family: inherit;
+                font-size: 12px;
+                cursor: pointer;
+                transition: transform 0.08s ease, background 0.12s ease;
+            }
+
+                #eventModal button:hover {
+                    background: var(--border);
+                }
+
+                #eventModal button:active {
+                    transform: scale(0.97);
+                }
+
+        /* ---- Toast notifications ---- */
+        #toastLayer {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 15;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--bg-panel);
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            font-weight: bold;
+            padding: 8px 16px;
+            font-size: 13px;
+            letter-spacing: 1px;
+            opacity: 0;
+            transform: translateY(-10px);
+            animation: toastIn 0.3s ease forwards, toastOut 0.4s ease 2.2s forwards;
+        }
+
+        @keyframes toastIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes toastOut {
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+
+        /* ---- Game over overlay ---- */
+        #gameOver {
+            position: absolute;
+            inset: 0;
+            background: rgba(10,8,16,0.92);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 20;
+            text-align: center;
+            gap: 10px;
+        }
+
+            #gameOver h1 {
+                color: var(--danger);
+                letter-spacing: 3px;
+                font-size: 26px;
+                margin: 0;
+            }
+
+            #gameOver p {
+                color: var(--text-dim);
+                font-size: 13px;
+                margin: 4px 0;
+            }
+
+            #gameOver .final {
+                color: var(--gold);
+                font-size: 20px;
+            }
+
+            #gameOver button {
+                margin-top: 14px;
+                background: var(--gold);
+                color: #241d33;
+                border: none;
+                padding: 10px 22px;
+                font-family: inherit;
+                font-weight: bold;
+                letter-spacing: 1px;
+                font-size: 13px;
+                cursor: pointer;
+            }
+
+        #hint {
+            position: absolute;
+            left: 50%;
+            top: 8px;
+            transform: translateX(-50%);
+            color: var(--text-dim);
+            font-size: 10px;
+            z-index: 5;
+            pointer-events: none;
+            background: rgba(22,19,32,0.6);
+            padding: 3px 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="ticker">
+            <div class="brand">BULLSHIT JOBS™</div>
+            <div class="stats">
+                <div class="stat"><span>SURVIVAL</span><b id="statTime">00:00</b></div>
+                <div class="stat best"><span>BEST</span><b id="statBest">00:00</b></div>
+            </div>
+            <div id="flavor">Productivity generated. Meaning: none.</div>
+        </div>
+
+        <div id="canvasWrap">
+            <canvas id="game"></canvas>
+            <div id="hint">Move the mouse near the edges to pan · click an employee to select them</div>
+
+            <div id="hireBar">
+                <div class="label">HIRE —</div>
+                <!-- class buttons injected by JS -->
+                <button id="pizzaBtn" class="special">🍕 <span class="name">Free Pizza Friday</span><span class="cost">60</span></button>
+            </div>
+
+            <div id="charPanel">
+                <div class="tag" id="cpClass">—</div>
+                <h3 id="cpTitle">Employee #0</h3>
+                <div class="row"><span>Happiness</span><b id="cpHappy">0</b></div>
+                <div class="barOuter"><div class="barInner" id="cpBar" style="width:0%"></div></div>
+                <div class="row"><span>Output/tick</span><b id="cpOutput">0</b></div>
+                <div class="row" id="cpBurnoutRow" style="display:none"><span class="burnoutFlag">⚠ BURNOUT</span></div>
+                <button id="pepTalkBtn" class="good">PEP TALK (<span id="pepCost"></span> BSJ)</button>
+                <button id="fireBtn">FIRE (<span id="fireCost"></span> BSJ)</button>
+            </div>
+
+            <div id="currencyPanel">
+                <div class="cur-label">BSJ</div>
+                <div class="cur-value" id="curValue">0</div>
+                <div class="staff-row"><span>STAFF</span><b id="staffValue">0</b></div>
+            </div>
+
+            <div id="toastLayer"></div>
+
+            <div id="eventModal">
+                <div class="event-box">
+                    <div class="event-tag">EVENT</div>
+                    <h2 id="eventTitle">—</h2>
+                    <p id="eventDesc"></p>
+                    <div class="event-choices">
+                        <button id="eventChoiceA"></button>
+                        <button id="eventChoiceB"></button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="gameOver">
+                <h1>COMPANY COLLAPSED</h1>
+                <p>All employees have left.</p>
+                <div class="final">Survival: <span id="finalTime">00:00</span></div>
+                <p id="recordMsg"></p>
+                <button id="restartBtn">NEW SIMULATION</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+"use strict";
+
+/* =========================================================================
+ * CONFIG  —  costanti derivate dalla specifica Dox (spec-v1-en.md)
+ * ========================================================================= */
+const CFG = {
+  COLS: 15, ROWS: 15,              // [TR 7]
+  TILE_W: 64, TILE_H: 32,          // [TR 13]
+  TICK_MS: 1000,                   // [TR 8] tick di simulazione a intervallo fisso
+  HAPPY_DECAY_BASE: 1.1,           // [D 7][D 14] decadimento base a inizio partita
+  HAPPY_DECAY_RAMP: 0.01,          // [D 14][TR 23] incremento lineare per tick
+  HAPPY_DECAY_MAX: 4.0,            // [TR 23] tetto massimo del decadimento
+  ADJ_SCALE: 0.35,                 // scala l'effetto della matrice di adiacenza [D 8]
+  BURNOUT_THRESHOLD: 20,           // [A 1] soglia burnout — valore ipotizzato, da bilanciare
+  HIRE_COST: 50,                   // [A 2] costo assunzione — ipotizzato, > costo licenziamento
+  FIRE_COST: 15,                   // [A 2] piccola penale di uscita, non gratuita
+  PEP_TALK_COST: 25,               // [FR 18]
+  PEP_TALK_BOOST: 25,              // [FR 18] boost immediato al selezionato
+  PEP_TALK_NEIGHBOR_BOOST: 15,     // [FR 18] boost immediato ai vicini
+  PIZZA_COST: 60,                  // [FR 19]
+  PIZZA_BOOST: 18,                 // [FR 19] boost immediato a tutta la mappa
+  PIZZA_COOLDOWN_MS: 25000,        // [FR 19]
+  EVENT_MIN_MS: 28000,             // [FR 20]
+  EVENT_MAX_MS: 48000,             // [FR 20]
+  START_CURRENCY: 120,
+  WANDER_MIN_MS: 2200,
+  WANDER_MAX_MS: 5000,
+  MOVE_SPEED_TILES_PER_S: 1.8,     // [TR 15] v3: continuous glide speed between adjacent cells
+};
+
+// [D 10] Caratterizzazione delle 5 classi.
+// baseValue: valore economico individuale base (negativo = consumo/upkeep)
+// neighborEffect: effetto sulla felicità dei vicini (applicato per-vicino, per tick)
+// stabilizer: riduce la magnitudo degli altri effetti ricevuti da un personaggio adiacente
+// burnoutTicksToLeave: durata in burnout prima della scomparsa, per classe [A 3]
+const CLASSES = {
+  FLUNKY:      { key:'FLUNKY',      name:'Flunky',       color:'#7dd3fc', baseValue:2,  neighborEffect:8,   stabilizer:false, burnoutTicksToLeave:18 },
+  GOON:        { key:'GOON',        name:'Goon',         color:'#a1a1aa', baseValue:10, neighborEffect:-6,  stabilizer:false, burnoutTicksToLeave:10 },
+  DUCT_TAPER:  { key:'DUCT_TAPER',  name:'Duct Taper',   color:'#fb923c', baseValue:4,  neighborEffect:2,   stabilizer:true,  burnoutTicksToLeave:20 },
+  BOX_TICKER:  { key:'BOX_TICKER',  name:'Box Ticker',   color:'#c084fc', baseValue:-8, neighborEffect:0,   stabilizer:false, burnoutTicksToLeave:12 },
+  TASK_MASTER: { key:'TASK_MASTER', name:'Task Master',  color:'#f472b6', baseValue:9,  neighborEffect:-10, stabilizer:false, burnoutTicksToLeave:8  },
+};
+const CLASS_LIST = Object.values(CLASSES);
+
+const FLAVORS = [
+  "Productivity generated. Meaning: none.",
+  "Your calendar is 90% meetings about meetings.",
+  "Box Tickers demand a form to request a form.",
+  "Task Masters invent urgency where none exists.",
+  "Duct Tapers hold the whole thing together with tape.",
+  "Goons multiply. Nobody remembers hiring them.",
+  "Flunkies keep morale up. Someone has to.",
+  "The mission statement has been revised for the 9th time.",
+];
+
+// [FR 20] Random events — themed two-choice trade-offs
+const EVENTS = [
+  {
+    title: 'Compliance Audit',
+    desc: 'Auditors found irregularities in the Box Ticker paperwork.',
+    a: { label: 'Pay the fine (35 BSJ)', apply: ()=>{ state.currency = Math.max(0, state.currency-35); } },
+    b: { label: 'Ignore it (Box Tickers -15 happiness)', apply: ()=>{
+      for(const ch of state.characters) if(ch.cls.key==='BOX_TICKER') ch.happiness = clamp(ch.happiness-15,0,100);
+    } },
+  },
+  {
+    title: 'Viral LinkedIn Post',
+    desc: "A Task Master's thought-leadership post is going viral.",
+    a: { label: 'Boost it (+40 BSJ)', apply: ()=>{ state.currency += 40; } },
+    b: { label: 'Delete it (Task Masters +10 happiness)', apply: ()=>{
+      for(const ch of state.characters) if(ch.cls.key==='TASK_MASTER') ch.happiness = clamp(ch.happiness+10,0,100);
+    } },
+  },
+  {
+    title: 'Surprise Reorg',
+    desc: 'Leadership wants a surprise reorg by Friday.',
+    a: { label: 'Push back (-20 BSJ)', apply: ()=>{ state.currency = Math.max(0, state.currency-20); } },
+    b: { label: 'Go along with it (all -8 happiness)', apply: ()=>{
+      for(const ch of state.characters) ch.happiness = clamp(ch.happiness-8,0,100);
+    } },
+  },
+  {
+    title: 'Coffee Machine Upgrade',
+    desc: 'Facilities is offering a fancy new coffee machine.',
+    a: { label: 'Buy it (25 BSJ, all +12 happiness)', apply: ()=>{
+      if(state.currency>=25){ state.currency-=25; for(const ch of state.characters) ch.happiness=clamp(ch.happiness+12,0,100); }
+    } },
+    b: { label: 'Skip it', apply: ()=>{} },
+  },
+  {
+    title: 'Team Building Retreat',
+    desc: 'HR proposes a mandatory team-building retreat.',
+    a: { label: 'Approve (30 BSJ, all +15 happiness)', apply: ()=>{
+      if(state.currency>=30){ state.currency-=30; for(const ch of state.characters) ch.happiness=clamp(ch.happiness+15,0,100); }
+    } },
+    b: { label: 'Cancel it (all -5 happiness)', apply: ()=>{
+      for(const ch of state.characters) ch.happiness = clamp(ch.happiness-5,0,100);
+    } },
+  },
+];
+
+/* =========================================================================
+ * STATE
+ * ========================================================================= */
+const state = {
+  currency: CFG.START_CURRENCY,
+  tickCount: 0,
+  startedAt: performance.now(),
+  gameOver: false,
+  characters: [],       // array of Character
+  nextId: 1,
+  selectedId: null,
+  camera: { x: 0, y: 0 },
+  zoom: 1.5,               // [TR 16] fixed zoom level, 150% — no in-game toggle
+  mouse: { x: -1, y: -1 },
+  grid: [],              // [TR 6] 2D array — occupancy map, stores character id or null
+  placing: null,          // [FR 16] class pending manual placement, or null
+  eventOpen: false,       // [FR 20] true while a random event modal is open (pauses the tick)
+  nextEventAt: 0,         // [FR 20]
+};
+
+function makeGrid(){
+  const g = [];
+  for(let c=0;c<CFG.COLS;c++){ g.push(new Array(CFG.ROWS).fill(null)); }
+  return g;
+}
+
+/* =========================================================================
+ * CHARACTER
+ * ========================================================================= */
+class Character {
+  constructor(cls, col, row){
+    this.id = state.nextId++;
+    this.cls = cls;
+    this.col = col; this.row = row;             // logical grid position (adjacency uses this)
+    this.px = col; this.py = row;                // rendered (interpolated) position [TR 15]
+    this.happiness = 55 + Math.random()*20;      // baseline distribution around class norm
+    this.destCol = col; this.destRow = row;
+    this.moving = false;
+    this.nextWanderAt = performance.now() + rand(CFG.WANDER_MIN_MS, CFG.WANDER_MAX_MS);
+    this.burnoutTicks = 0;
+    this.inBurnout = false;
+    this.fading = false;
+    this.opacity = 1;
+    this.walkFrame = 0;
+  }
+  get output(){
+    return this.cls.baseValue * (this.happiness/100); // [D 9]
+  }
+}
+
+function rand(min,max){ return min + Math.random()*(max-min); }
+function randInt(min,max){ return Math.floor(rand(min,max+1)); }
+function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
+
+/* =========================================================================
+ * SETUP — squadra iniziale sbilanciata verso ruoli a basso impatto [FR 4]
+ * ========================================================================= */
+function freeCell(){
+  for(let attempts=0; attempts<400; attempts++){
+    const c = randInt(0, CFG.COLS-1), r = randInt(0, CFG.ROWS-1);
+    if(!state.grid[c][r]) return [c,r];
+  }
+  return null;
+}
+
+function spawnCharacter(cls, col, row){
+  const ch = new Character(cls, col, row);
+  state.grid[col][row] = ch.id;
+  state.characters.push(ch);
+  return ch;
+}
+
+function initGame(){
+  state.currency = CFG.START_CURRENCY;
+  state.tickCount = 0;
+  state.startedAt = performance.now();
+  state.gameOver = false;
+  state.characters = [];
+  state.selectedId = null;
+  state.placing = null;
+  state.eventOpen = false;
+  state.grid = makeGrid();
+  document.getElementById('gameOver').style.display = 'none';
+  document.getElementById('charPanel').style.display = 'none';
+  document.getElementById('eventModal').style.display = 'none';
+  milestoneIdx = 0;
+  scheduleNextEvent(performance.now());
+  updatePlacementUI();
+
+  const roster = [
+    [CLASSES.FLUNKY, 12], [CLASSES.GOON, 5], [CLASSES.DUCT_TAPER, 4],
+    [CLASSES.BOX_TICKER, 3], [CLASSES.TASK_MASTER, 1],
+  ];
+  for(const [cls,count] of roster){
+    for(let i=0;i<count;i++){
+      const cell = freeCell();
+      if(cell) spawnCharacter(cls, cell[0], cell[1]);
+    }
+  }
+  // camera centered roughly on the cluster
+  state.camera.x = 0; state.camera.y = 0;
+}
+
+/* =========================================================================
+ * SIMULATION TICK — [FR 5] decoupled from render framerate [TR 8]
+ * ========================================================================= */
+function neighborsOf(ch){
+  const dirs = [[0,-1],[0,1],[-1,0],[1,0]]; // N/S/E/O — [TR 14] no diagonals
+  const out = [];
+  for(const [dc,dr] of dirs){
+    const c = ch.col+dc, r = ch.row+dr;
+    if(c<0||r<0||c>=CFG.COLS||r>=CFG.ROWS) continue;
+    const id = state.grid[c][r];
+    if(id){
+      const n = state.characters.find(x=>x.id===id);
+      if(n) out.push(n);
+    }
+  }
+  return out;
+}
+
+function simulationTick(){
+  if(state.gameOver || state.eventOpen) return; // [FR 20] paused while an event choice is pending
+  state.tickCount++;
+
+  // (a) baseline decay [D 7], ramping up over the course of a run [D 14][TR 23]
+  const decay = Math.min(CFG.HAPPY_DECAY_MAX, CFG.HAPPY_DECAY_BASE + state.tickCount*CFG.HAPPY_DECAY_RAMP);
+  for(const ch of state.characters){
+    ch.happiness = clamp(ch.happiness - decay, 0, 100);
+  }
+
+  // (b) adjacency effects [D 8] — computed from a snapshot so all effects are simultaneous
+  const deltas = new Map();
+  for(const ch of state.characters){
+    const neigh = neighborsOf(ch);
+    const ductTapers = neigh.filter(n=>n.cls.stabilizer);
+    const others = neigh.filter(n=>!n.cls.stabilizer);
+    let raw = 0;
+    for(const n of others) raw += n.cls.neighborEffect * CFG.ADJ_SCALE;
+    // Duct Tapers dampen the magnitude of surrounding effects (stabilization) and
+    // additionally contribute their own mild positive effect.
+    const dampen = ductTapers.length ? Math.max(0.4, 1 - 0.15*ductTapers.length) : 1;
+    raw *= dampen;
+    for(const n of ductTapers) raw += n.cls.neighborEffect * CFG.ADJ_SCALE;
+    deltas.set(ch.id, raw);
+  }
+  for(const ch of state.characters){
+    ch.happiness = clamp(ch.happiness + (deltas.get(ch.id)||0), 0, 100);
+  }
+
+  // (c) currency output [D 9]
+  let total = 0;
+  for(const ch of state.characters) total += ch.output;
+  state.currency = Math.max(0, state.currency + total);
+
+  // burnout bookkeeping [FR 2] / [A 3] — duration before disappearance varies per class
+  const toRemove = [];
+  for(const ch of state.characters){
+    if(ch.happiness < CFG.BURNOUT_THRESHOLD){
+      const wasInBurnout = ch.inBurnout;
+      ch.inBurnout = true;
+      ch.burnoutTicks++;
+      if(!wasInBurnout) playTone(140, 0.25, 'sawtooth', 0.06); // [TR 25] burnout onset cue
+      if(ch.burnoutTicks >= ch.cls.burnoutTicksToLeave && !ch.fading){
+        ch.fading = true; // starts fade-out animation, removed once opacity hits 0
+      }
+    } else {
+      ch.inBurnout = false;
+      ch.burnoutTicks = 0;
+    }
+  }
+
+  // occasional flavor text refresh
+  if(state.tickCount % 6 === 0){
+    document.getElementById('flavor').textContent = FLAVORS[randInt(0,FLAVORS.length-1)];
+  }
+
+  // [FR 1] game over when map is empty
+  if(state.characters.length === 0 && state.tickCount > 0){
+    triggerGameOver();
+  }
+}
+
+/* =========================================================================
+ * MOVEMENT — [FR 7] continuous, interpolated glide between adjacent grid
+ * cells (v3 reverses the discrete-jump behavior of v2) [TR 15].
+ * ========================================================================= */
+function updateMovement(dt, now){
+  for(const ch of state.characters){
+    if(ch.fading){
+      ch.opacity -= dt*0.6;
+      continue;
+    }
+    if(!ch.moving && now >= ch.nextWanderAt){
+      const dirs = [[0,-1],[0,1],[-1,0],[1,0]];
+      shuffle(dirs);
+      for(const [dc,dr] of dirs){
+        const c = ch.col+dc, r = ch.row+dr;
+        if(c<0||r<0||c>=CFG.COLS||r>=CFG.ROWS) continue;
+        if(state.grid[c][r]) continue;
+        state.grid[ch.col][ch.row] = null;
+        ch.destCol = c; ch.destRow = r;
+        state.grid[c][r] = ch.id;
+        ch.moving = true;
+        break;
+      }
+      ch.nextWanderAt = now + rand(CFG.WANDER_MIN_MS, CFG.WANDER_MAX_MS);
+    }
+    if(ch.moving){
+      const dx = ch.destCol - ch.px, dy = ch.destRow - ch.py;
+      const dist = Math.hypot(dx,dy);
+      const step = CFG.MOVE_SPEED_TILES_PER_S * dt;
+      if(dist <= step || dist === 0){
+        ch.px = ch.destCol; ch.py = ch.destRow;
+        ch.col = ch.destCol; ch.row = ch.destRow;
+        ch.moving = false;
+      } else {
+        ch.px += (dx/dist)*step;
+        ch.py += (dy/dist)*step;
+        ch.walkFrame = Math.floor(now/150)%2;
+      }
+    }
+  }
+  // remove fully faded characters (must happen outside the loop above to be safe)
+  for(let i=state.characters.length-1;i>=0;i--){
+    const ch = state.characters[i];
+    if(ch.fading && ch.opacity<=0){
+      if(state.grid[ch.col][ch.row]===ch.id) state.grid[ch.col][ch.row]=null;
+      if(state.selectedId===ch.id){ state.selectedId=null; closePanel(); }
+      state.characters.splice(i,1);
+    }
+  }
+}
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=randInt(0,i); [arr[i],arr[j]]=[arr[j],arr[i]]; } }
+
+/* =========================================================================
+ * RENDERING — Canvas 2D isometric [TR 2] [TR 3]
+ * ========================================================================= */
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+ctx.imageSmoothingEnabled = false;
+
+function resizeCanvas(){
+  const wrap = document.getElementById('canvasWrap');
+  canvas.width = wrap.clientWidth;
+  canvas.height = wrap.clientHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+
+// Origin offset so the whole grid sits in positive iso-space
+const ISO_OX = (CFG.ROWS * CFG.TILE_W)/2;
+const ISO_OY = 40;
+
+function gridToWorld(col,row){
+  return {
+    x: ISO_OX + (col-row)*(CFG.TILE_W/2),
+    y: ISO_OY + (col+row)*(CFG.TILE_H/2),
+  };
+}
+
+// Effective visible world-space size, accounting for the zoom level [TR 16]
+function viewW(){ return canvas.width / state.zoom; }
+function viewH(){ return canvas.height / state.zoom; }
+
+function drawTile(sx, sy, colorTop, colorLeft, colorRight){
+  const w = CFG.TILE_W, h = CFG.TILE_H;
+  ctx.beginPath();
+  ctx.moveTo(sx, sy - h/2);
+  ctx.lineTo(sx + w/2, sy);
+  ctx.lineTo(sx, sy + h/2);
+  ctx.lineTo(sx - w/2, sy);
+  ctx.closePath();
+  ctx.fillStyle = colorTop;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,0.18)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+}
+
+function drawFloor(){
+  const vw = viewW(), vh = viewH();
+  for(let col=0; col<CFG.COLS; col++){
+    for(let row=0; row<CFG.ROWS; row++){
+      const w = gridToWorld(col,row);
+      const sx = w.x - state.camera.x, sy = w.y - state.camera.y;
+      if(sx < -CFG.TILE_W || sx > vw+CFG.TILE_W || sy < -CFG.TILE_H || sy > vh+CFG.TILE_H) continue;
+      const checker = (col+row)%2===0;
+      let top = checker ? '#6366f1' : '#4f46e5';
+      if(state.placing && !state.grid[col][row]){
+        top = checker ? '#4ade80' : '#22c55e'; // [TR 22] valid placement target
+      }
+      if(state.selectedId){
+        const sel = state.characters.find(c=>c.id===state.selectedId);
+        if(sel && sel.col===col && sel.row===row) top = '#fbbf24'; // [FR 12] selection highlight
+      }
+      drawTile(sx, sy, top);
+    }
+  }
+}
+
+// Character sprites are pre-rendered once per class on a small off-screen
+// canvas and scaled up with nearest-neighbor rendering, so every instance of
+// a class shares an identical, genuinely blocky pixel-art sprite [TR 21],
+// distinct per class in structure/accessory, not just color [D 12].
+function drawCharacter(ch){
+  const w = gridToWorld(ch.px, ch.py);
+  const sx = w.x - state.camera.x;
+  const sy = w.y - state.camera.y;
+  const vw = viewW(), vh = viewH();
+  if(sx < -40 || sx > vw+40 || sy < -80 || sy > vh+40) return;
+
+  ctx.save();
+  ctx.globalAlpha = ch.opacity;
+
+  // shadow, drawn live (independent of the sprite bitmap)
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.beginPath();
+  ctx.ellipse(sx, sy+2, 10, 4, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // walk bounce while gliding between cells [TR 15]
+  const bob = ch.moving ? (ch.walkFrame===0? -1: 1) : 0;
+  const img = ch.cls.sprite;
+  const scale = SPRITE_SCALE;
+  const dw = img.width*scale, dh = img.height*scale;
+  const dx = sx - SPRITE_ORIGIN_X*scale;
+  const dy = sy - SPRITE_ORIGIN_Y*scale + bob;
+
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(img, dx, dy, dw, dh);
+
+  if(ch.inBurnout){
+    const pulse = 0.5 + 0.5*Math.sin(performance.now()/120);
+    ctx.globalAlpha = ch.opacity * (0.45 + 0.5*pulse); // [TR 24] stronger, more saturated tint
+    ctx.drawImage(ch.cls.spriteBurnout, dx, dy, dw, dh);
+    ctx.globalAlpha = ch.opacity;
+    const markY = dy - 10 + Math.sin(performance.now()/90)*2;
+    ctx.fillStyle = 'rgba(15,10,30,0.6)';
+    ctx.beginPath(); ctx.arc(sx, markY-3, 9, 0, Math.PI*2); ctx.fill();
+    ctx.font = 'bold 18px monospace';
+    ctx.textAlign = 'center';
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = '#1a0a12';
+    ctx.strokeText('!', sx, markY);
+    ctx.fillStyle = '#ff2d4d';
+    ctx.fillText('!', sx, markY);
+  }
+
+  ctx.restore();
+}
+
+// Per-class body/head footprint — gives each class a different silhouette.
+function classShape(key){
+  switch(key){
+    case 'FLUNKY':      return { bodyW:12, bodyH:16, headW:9  }; // small, unassuming
+    case 'GOON':         return { bodyW:19, bodyH:17, headW:11 }; // bulky
+    case 'DUCT_TAPER':   return { bodyW:14, bodyH:18, headW:10 }; // regular
+    case 'BOX_TICKER':   return { bodyW:14, bodyH:18, headW:10 }; // regular + clipboard
+    case 'TASK_MASTER':  return { bodyW:14, bodyH:20, headW:10 }; // taller
+  }
+}
+
+// Per-class visual accessory, drawn on top of the base humanoid.
+// Takes an explicit context so it can render both on-screen and into the
+// off-screen sprite-building canvas below.
+function drawClassAccessory(cctx, key, baseY, bw){
+  switch(key){
+    case 'FLUNKY':
+      // no accessory — deliberately plain
+      break;
+    case 'GOON':
+      // dark sunglasses bar + shoulder pads
+      cctx.fillStyle = '#18181b';
+      cctx.fillRect(-bw/2+2, baseY+3, bw-4, 3);
+      cctx.fillRect(-bw/2-3, baseY+1, 4, 5);
+      cctx.fillRect(bw/2-1, baseY+1, 4, 5);
+      break;
+    case 'DUCT_TAPER': {
+      // diagonal silver/orange tape cross
+      cctx.save();
+      cctx.strokeStyle = '#e2e8f0';
+      cctx.lineWidth = 3;
+      cctx.beginPath(); cctx.moveTo(-bw/2, baseY+2); cctx.lineTo(bw/2, baseY+14); cctx.stroke();
+      cctx.strokeStyle = '#fdba74';
+      cctx.lineWidth = 2;
+      cctx.beginPath(); cctx.moveTo(-bw/2, baseY+14); cctx.lineTo(bw/2, baseY+2); cctx.stroke();
+      cctx.restore();
+      break;
+    }
+    case 'BOX_TICKER':
+      // clipboard held at the side + thin office glasses
+      cctx.fillStyle = '#18181b';
+      cctx.fillRect(-bw/2+2, baseY+2, bw-4, 2);
+      cctx.fillStyle = '#f1f5f9';
+      cctx.fillRect(bw/2, baseY+4, 7, 9);
+      cctx.strokeStyle = '#334155';
+      cctx.lineWidth = 1;
+      cctx.strokeRect(bw/2, baseY+4, 7, 9);
+      cctx.fillStyle = '#334155';
+      cctx.fillRect(bw/2+1, baseY+7, 5, 1);
+      cctx.fillRect(bw/2+1, baseY+9, 5, 1);
+      break;
+    case 'TASK_MASTER':
+      // red tie + pointed shoulder spikes
+      cctx.fillStyle = '#b91c1c';
+      cctx.beginPath();
+      cctx.moveTo(0, baseY+2); cctx.lineTo(3, baseY+7); cctx.lineTo(0, baseY+16); cctx.lineTo(-3, baseY+7);
+      cctx.closePath(); cctx.fill();
+      cctx.fillStyle = '#1f2937';
+      cctx.beginPath(); cctx.moveTo(-bw/2-1, baseY+1); cctx.lineTo(-bw/2-6, baseY-2); cctx.lineTo(-bw/2+2, baseY+4); cctx.closePath(); cctx.fill();
+      cctx.beginPath(); cctx.moveTo(bw/2+1, baseY+1); cctx.lineTo(bw/2+6, baseY-2); cctx.lineTo(bw/2-2, baseY+4); cctx.closePath(); cctx.fill();
+      break;
+  }
+}
+
+function lerpColor(a,b,t){
+  const pa = hexToRgb(a), pb = hexToRgb(b);
+  const r = Math.round(pa.r + (pb.r-pa.r)*t);
+  const g = Math.round(pa.g + (pb.g-pa.g)*t);
+  const bl = Math.round(pa.b + (pb.b-pa.b)*t);
+  return `rgb(${r},${g},${bl})`;
+}
+function hexToRgb(hex){
+  const v = hex.replace('#','');
+  return { r: parseInt(v.substring(0,2),16), g: parseInt(v.substring(2,4),16), b: parseInt(v.substring(4,6),16) };
+}
+
+// --- Off-screen pixel-art sprite construction [TR 21] --------------------
+// Every class is drawn once into a small native-resolution canvas (no
+// anti-aliasing) and later scaled up with nearest-neighbor sampling. This
+// guarantees a uniform, genuinely blocky pixel-art technique across all
+// classes, while the drawing itself still varies per class (silhouette +
+// accessory), keeping them visually distinct.
+const SPRITE_W = 34, SPRITE_H = 44;
+const SPRITE_ORIGIN_X = 17, SPRITE_ORIGIN_Y = 40; // local anchor = character's feet
+const SPRITE_SCALE = 1.4; // on-screen upscale factor
+
+function buildClassSprite(cls, colorOverride){
+  const off = document.createElement('canvas');
+  off.width = SPRITE_W; off.height = SPRITE_H;
+  const octx = off.getContext('2d');
+  octx.imageSmoothingEnabled = false;
+  octx.save();
+  octx.translate(SPRITE_ORIGIN_X, SPRITE_ORIGIN_Y);
+
+  const baseY = -30;
+  const dims = classShape(cls.key); // {bodyW, bodyH, headW}
+  const bw = dims.bodyW, bh = dims.bodyH, hw = dims.headW;
+  const bodyColor = colorOverride || cls.color;
+
+  // legs
+  octx.fillStyle = '#241f45';
+  octx.fillRect(-bw/2+1, baseY+bh, 4, 8);
+  octx.fillRect(bw/2-5, baseY+bh, 4, 8);
+
+  // body
+  octx.fillStyle = bodyColor;
+  octx.fillRect(-bw/2, baseY, bw, bh);
+  octx.strokeStyle = '#151233';
+  octx.lineWidth = 1;
+  octx.strokeRect(-bw/2, baseY, bw, bh);
+
+  // head
+  octx.fillStyle = '#f8dcb4';
+  octx.fillRect(-hw/2, baseY-10, hw, 10);
+  octx.strokeRect(-hw/2, baseY-10, hw, 10);
+
+  drawClassAccessory(octx, cls.key, baseY, bw);
+
+  octx.restore();
+  return off;
+}
+
+// Precompute the normal and burnout sprite variants once per class.
+for(const cls of CLASS_LIST){
+  cls.sprite = buildClassSprite(cls);
+  cls.spriteBurnout = buildClassSprite(cls, lerpColor(cls.color, '#ff2d4d', 0.85)); // [TR 24]
+}
+
+// [FR 17] Selecting a character reveals its adjacency effects: a dashed
+// link to each neighbor, colored/weighted by the sign and magnitude of the
+// happiness effect that neighbor exerts (same formula as [D 8]/[FR 5]).
+function drawAdjacencyLinks(){
+  if(state.selectedId==null) return;
+  const ch = state.characters.find(c=>c.id===state.selectedId);
+  if(!ch) return;
+  const wA = gridToWorld(ch.px, ch.py);
+  const sxA = wA.x - state.camera.x, syA = wA.y - state.camera.y - 18;
+  for(const n of neighborsOf(ch)){
+    const effect = n.cls.neighborEffect * CFG.ADJ_SCALE;
+    const wB = gridToWorld(n.px, n.py);
+    const sxB = wB.x - state.camera.x, syB = wB.y - state.camera.y - 18;
+    const positive = effect >= 0;
+    const mag = Math.min(1, Math.abs(effect)/4);
+    ctx.save();
+    ctx.strokeStyle = positive ? `rgba(74,222,128,${0.4+0.5*mag})` : `rgba(244,63,94,${0.4+0.5*mag})`;
+    ctx.lineWidth = 1.5 + mag*3;
+    ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(sxA,syA); ctx.lineTo(sxB,syB); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function render(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.save();
+  ctx.scale(state.zoom, state.zoom); // [TR 16]
+  drawFloor();
+  // depth sort: draw back-to-front by (col+row)
+  const sorted = [...state.characters].sort((a,b)=>(a.px+a.py)-(b.px+b.py));
+  for(const ch of sorted) drawCharacter(ch);
+  drawAdjacencyLinks();
+  ctx.restore();
+}
+
+/* =========================================================================
+ * CAMERA / PANNING — [FR 11] pan only (zoom is a fixed 150% render scale,
+ * [TR 16], not a user control), [TR 10] edge-pan via mouse movement.
+ * The camera is clamped tightly to the map's actual bounds [TR 17] so
+ * panning can't reveal much empty space beyond the edges, and the pan
+ * trigger zone is kept small [TR 18] so it doesn't fire while the mouse
+ * is simply travelling toward a side panel.
+ * ========================================================================= */
+// Precise world-space bounding box of the iso grid (tile centers ± half a tile)
+const MAP_BOUNDS = (function(){
+  const corners = [
+    gridToWorld(0,0), gridToWorld(CFG.COLS-1,0),
+    gridToWorld(0,CFG.ROWS-1), gridToWorld(CFG.COLS-1,CFG.ROWS-1),
+  ];
+  let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+  for(const c of corners){
+    minX=Math.min(minX,c.x); maxX=Math.max(maxX,c.x);
+    minY=Math.min(minY,c.y); maxY=Math.max(maxY,c.y);
+  }
+  return {
+    minX: minX - CFG.TILE_W/2, maxX: maxX + CFG.TILE_W/2,
+    minY: minY - CFG.TILE_H/2, maxY: maxY + CFG.TILE_H/2,
+  };
+})();
+const PAN_PAD = 24; // small breathing room, not a wide empty margin [TR 17]
+const PAN_MARGIN = 46; // small edge-pan trigger zone [TR 18]
+const PAN_SPEED = 560; // px/s
+
+function updateCamera(dt){
+  const vw = viewW(), vh = viewH();
+  let dx=0, dy=0;
+  if(state.mouse.x>=0){
+    if(state.mouse.x < PAN_MARGIN) dx = -1;
+    else if(state.mouse.x > canvas.width-PAN_MARGIN) dx = 1;
+    if(state.mouse.y < PAN_MARGIN) dy = -1;
+    else if(state.mouse.y > canvas.height-PAN_MARGIN) dy = 1;
+  }
+  const minCamX = MAP_BOUNDS.minX - PAN_PAD;
+  const maxCamX = Math.max(minCamX, MAP_BOUNDS.maxX - vw + PAN_PAD);
+  const minCamY = MAP_BOUNDS.minY - PAN_PAD;
+  const maxCamY = Math.max(minCamY, MAP_BOUNDS.maxY - vh + PAN_PAD);
+  state.camera.x = clamp(state.camera.x + dx*PAN_SPEED*dt, minCamX, maxCamX);
+  state.camera.y = clamp(state.camera.y + dy*PAN_SPEED*dt, minCamY, maxCamY);
+}
+
+/* =========================================================================
+ * INPUT — [FR 9] [FR 10] mouse-only interaction
+ * ========================================================================= */
+canvas.addEventListener('mousemove', e=>{
+  const r = canvas.getBoundingClientRect();
+  state.mouse.x = e.clientX - r.left;
+  state.mouse.y = e.clientY - r.top;
+});
+canvas.addEventListener('mouseleave', ()=>{ state.mouse.x=-1; state.mouse.y=-1; });
+
+canvas.addEventListener('click', e=>{
+  if(state.gameOver || state.eventOpen) return;
+  const r = canvas.getBoundingClientRect();
+  const mx = (e.clientX - r.left)/state.zoom + state.camera.x;
+  const my = (e.clientY - r.top)/state.zoom + state.camera.y;
+  // inverse iso projection to find nearest grid cell
+  const relX = mx - ISO_OX, relY = my - ISO_OY;
+  const col = Math.round((relX/(CFG.TILE_W/2) + relY/(CFG.TILE_H/2))/2);
+  const row = Math.round((relY/(CFG.TILE_H/2) - relX/(CFG.TILE_W/2))/2);
+
+  // [FR 16][TR 22] manual placement mode: an empty in-bounds cell places the
+  // pending hire there; anything else cancels placement instead.
+  if(state.placing){
+    const inBounds = col>=0 && row>=0 && col<CFG.COLS && row<CFG.ROWS;
+    if(inBounds && !state.grid[col][row]){
+      if(state.currency >= CFG.HIRE_COST){
+        state.currency -= CFG.HIRE_COST;
+        spawnCharacter(state.placing, col, row);
+        playTone(520, 0.1, 'square', 0.05);
+      }
+      state.placing = null;
+      updatePlacementUI();
+      return;
+    }
+    state.placing = null;
+    updatePlacementUI();
+    // fall through: an occupied cell also selects the character under it
+  }
+
+  let found = null;
+  for(const ch of state.characters){
+    if(Math.round(ch.px)===col && Math.round(ch.py)===row){ found = ch; break; }
+  }
+  if(!found){
+    // fallback: pick nearest character within a small radius (forgiving hitbox)
+    let best=null, bestDist=1.1;
+    for(const ch of state.characters){
+      const d = Math.hypot(ch.px-col, ch.py-row);
+      if(d<bestDist){ bestDist=d; best=ch; }
+    }
+    found = best;
+  }
+  if(found){ selectCharacter(found.id); } else { state.selectedId=null; closePanel(); }
+});
+
+/* =========================================================================
+ * UI — [TR 9] HTML overlay panel for selected character stats/actions
+ * ========================================================================= */
+// generic click-feedback flash, reused by every button [FR 14]
+function flashButton(btn){
+  btn.classList.remove('pressed');
+  void btn.offsetWidth; // restart the CSS animation
+  btn.classList.add('pressed');
+  setTimeout(()=>btn.classList.remove('pressed'), 320);
+}
+
+const panel = document.getElementById('charPanel');
+const pepTalkBtn = document.getElementById('pepTalkBtn');
+const fireBtn = document.getElementById('fireBtn');
+function selectCharacter(id){
+  state.selectedId = id;
+  const ch = state.characters.find(c=>c.id===id);
+  if(!ch) return;
+  panel.style.display = 'block';
+  document.getElementById('cpClass').textContent = ch.cls.name.toUpperCase();
+  document.getElementById('cpTitle').textContent = 'Employee #' + ch.id;
+  document.getElementById('cpHappy').textContent = Math.round(ch.happiness);
+  const bar = document.getElementById('cpBar');
+  bar.style.width = clamp(ch.happiness,0,100) + '%';
+  bar.className = 'barInner' + (ch.happiness<CFG.BURNOUT_THRESHOLD?' crit': ch.happiness<45?' warn':'');
+  document.getElementById('cpOutput').textContent = ch.output.toFixed(2);
+  document.getElementById('cpBurnoutRow').style.display = ch.inBurnout ? 'flex':'none';
+  document.getElementById('fireCost').textContent = CFG.FIRE_COST;
+  document.getElementById('pepCost').textContent = CFG.PEP_TALK_COST;
+  pepTalkBtn.disabled = state.currency < CFG.PEP_TALK_COST;
+  fireBtn.disabled = state.currency < CFG.FIRE_COST;
+}
+function closePanel(){ panel.style.display='none'; }
+
+// [FR 18] Pep Talk — instant happiness boost to the selected employee and neighbors
+pepTalkBtn.addEventListener('click', ()=>{
+  flashButton(pepTalkBtn);
+  const ch = state.characters.find(c=>c.id===state.selectedId);
+  if(!ch || state.gameOver || state.eventOpen) return;
+  if(state.currency < CFG.PEP_TALK_COST) return;
+  state.currency -= CFG.PEP_TALK_COST;
+  ch.happiness = clamp(ch.happiness + CFG.PEP_TALK_BOOST, 0, 100);
+  for(const n of neighborsOf(ch)) n.happiness = clamp(n.happiness + CFG.PEP_TALK_NEIGHBOR_BOOST, 0, 100);
+  playTone(660, 0.14, 'sine', 0.06);
+});
+
+fireBtn.addEventListener('click', ()=>{
+  flashButton(fireBtn);
+  const ch = state.characters.find(c=>c.id===state.selectedId);
+  if(!ch || state.gameOver || state.eventOpen) return;
+  if(state.currency < CFG.FIRE_COST) return; // [FR 3] firing also costs currency
+  state.currency -= CFG.FIRE_COST;
+  if(state.grid[ch.col][ch.row]===ch.id) state.grid[ch.col][ch.row]=null;
+  state.characters = state.characters.filter(c=>c.id!==ch.id);
+  state.selectedId = null;
+  closePanel();
+  playTone(220, 0.16, 'sawtooth', 0.05);
+});
+
+// hire toolbar [FR 3] — each button also carries a color swatch, doubling
+// as the class legend; a separate legend panel is no longer shown [FR 13].
+// Clicking a class arms manual placement mode instead of spawning right
+// away [FR 16]; the next map click (on an empty tile) places the hire.
+const hireBar = document.getElementById('hireBar');
+const hireButtons = [];
+for(const cls of CLASS_LIST){
+  const btn = document.createElement('button');
+  btn.innerHTML = `<span class="sw" style="background:${cls.color}"></span><span class="name">${cls.name}</span><span class="cost">${CFG.HIRE_COST}</span>`;
+  btn.addEventListener('click', ()=>{
+    flashButton(btn); // [FR 14]
+    if(state.gameOver || state.eventOpen || state.currency < CFG.HIRE_COST) return;
+    state.placing = (state.placing === cls) ? null : cls; // click again to cancel
+    updatePlacementUI();
+  });
+  hireBar.appendChild(btn);
+  hireButtons.push({ btn, cls });
+}
+
+const pizzaBtn = document.getElementById('pizzaBtn');
+let pizzaCooldownUntil = 0;
+pizzaBtn.addEventListener('click', ()=>{
+  flashButton(pizzaBtn);
+  if(state.gameOver || state.eventOpen) return;
+  if(state.currency < CFG.PIZZA_COST || performance.now() < pizzaCooldownUntil) return;
+  state.currency -= CFG.PIZZA_COST;
+  for(const ch of state.characters) ch.happiness = clamp(ch.happiness + CFG.PIZZA_BOOST, 0, 100);
+  pizzaCooldownUntil = performance.now() + CFG.PIZZA_COOLDOWN_MS;
+  playTone(392, 0.12, 'triangle', 0.06);
+  setTimeout(()=>playTone(523, 0.14, 'triangle', 0.06), 110);
+});
+
+// keeps hire buttons' "armed" look and the map hint in sync with placement mode
+function updatePlacementUI(){
+  for(const {btn,cls} of hireButtons) btn.classList.toggle('armed', state.placing===cls);
+  const hint = document.getElementById('hint');
+  hint.textContent = state.placing
+    ? `Click an empty tile to place your new ${state.placing.name} — click the button again to cancel`
+    : 'Move the mouse near the edges to pan · click an employee to select them';
+}
+
+function refreshHireBar(){
+  const disabled = state.gameOver || state.eventOpen || state.currency < CFG.HIRE_COST;
+  for(const {btn} of hireButtons) btn.disabled = disabled;
+  const pizzaReady = performance.now() >= pizzaCooldownUntil;
+  pizzaBtn.disabled = state.gameOver || state.eventOpen || state.currency < CFG.PIZZA_COST || !pizzaReady;
+  pizzaBtn.querySelector('.cost').textContent = pizzaReady ? CFG.PIZZA_COST : Math.ceil((pizzaCooldownUntil-performance.now())/1000)+'s';
+}
+
+// currency / staff panel — replaces the former legend [FR 15]. The BSJ
+// readout flashes green (up) or red-ish (down) whenever the shown value
+// changes, giving a lightweight "ticker" feel to the simulation tick.
+const curValueEl = document.getElementById('curValue');
+const staffValueEl = document.getElementById('staffValue');
+let lastShownCurrency = null;
+function updateCurrencyPanel(){
+  const val = Math.round(state.currency);
+  if(lastShownCurrency !== null && val !== lastShownCurrency){
+    curValueEl.classList.remove('flash-up','flash-down');
+    void curValueEl.offsetWidth; // restart the CSS animation
+    curValueEl.classList.add(val > lastShownCurrency ? 'flash-up' : 'flash-down');
+  }
+  curValueEl.textContent = val;
+  lastShownCurrency = val;
+  staffValueEl.textContent = state.characters.length;
+}
+
+/* =========================================================================
+ * AUDIO — minimal Web Audio synth, no external assets [TR 25]
+ * ========================================================================= */
+let audioCtx = null;
+function ensureAudio(){
+  if(!audioCtx){
+    try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ audioCtx = null; }
+  }
+  return audioCtx;
+}
+function playTone(freq, dur=0.12, type='square', vol=0.05){
+  const ac = ensureAudio();
+  if(!ac) return;
+  const osc = ac.createOscillator(), gain = ac.createGain();
+  osc.type = type; osc.frequency.value = freq;
+  gain.gain.value = vol;
+  osc.connect(gain); gain.connect(ac.destination);
+  osc.start();
+  gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime+dur);
+  osc.stop(ac.currentTime+dur+0.02);
+}
+
+/* =========================================================================
+ * TOASTS & MILESTONES — lightweight survival-time feedback [TR 25]
+ * ========================================================================= */
+const MILESTONE_SECONDS = [60, 300, 600, 900, 1800]; // 1m, 5m, 10m, 15m, 30m
+let milestoneIdx = 0;
+function showToast(text){
+  const layer = document.getElementById('toastLayer');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = text;
+  layer.appendChild(el);
+  setTimeout(()=>el.remove(), 2700);
+}
+function checkMilestones(elapsedMs){
+  const sec = Math.floor(elapsedMs/1000);
+  while(milestoneIdx < MILESTONE_SECONDS.length && sec >= MILESTONE_SECONDS[milestoneIdx]){
+    showToast(`Survived ${fmtTime(MILESTONE_SECONDS[milestoneIdx]*1000)}!`);
+    playTone(880, 0.15, 'sine', 0.05);
+    milestoneIdx++;
+  }
+}
+
+/* =========================================================================
+ * RANDOM EVENTS — [FR 20] two-choice trade-offs, pause the simulation tick
+ * ========================================================================= */
+function scheduleNextEvent(now){
+  state.nextEventAt = now + rand(CFG.EVENT_MIN_MS, CFG.EVENT_MAX_MS);
+}
+function triggerRandomEvent(){
+  if(state.characters.length===0) return;
+  const ev = EVENTS[randInt(0, EVENTS.length-1)];
+  state.eventOpen = true;
+  document.getElementById('eventTitle').textContent = ev.title;
+  document.getElementById('eventDesc').textContent = ev.desc;
+  const btnA = document.getElementById('eventChoiceA');
+  const btnB = document.getElementById('eventChoiceB');
+  btnA.textContent = ev.a.label;
+  btnB.textContent = ev.b.label;
+  btnA.onclick = ()=>{ ev.a.apply(); closeEvent(); };
+  btnB.onclick = ()=>{ ev.b.apply(); closeEvent(); };
+  document.getElementById('eventModal').style.display = 'flex';
+  playTone(300, 0.16, 'square', 0.05);
+}
+function closeEvent(){
+  document.getElementById('eventModal').style.display = 'none';
+  state.eventOpen = false;
+  scheduleNextEvent(performance.now());
+}
+
+/* =========================================================================
+ * GAME OVER / RECORD — [D 6] local-only score, no shared backend
+ * ========================================================================= */
+const RECORD_KEY = 'bsj_best_survival_ms';
+function fmtTime(ms){
+  const total = Math.floor(ms/1000);
+  const m = String(Math.floor(total/60)).padStart(2,'0');
+  const s = String(total%60).padStart(2,'0');
+  return `${m}:${s}`;
+}
+function triggerGameOver(){
+  state.gameOver = true;
+  const elapsed = performance.now() - state.startedAt;
+  const best = Number(localStorage.getItem(RECORD_KEY) || 0);
+  const isRecord = elapsed > best;
+  if(isRecord) localStorage.setItem(RECORD_KEY, String(elapsed));
+  document.getElementById('finalTime').textContent = fmtTime(elapsed);
+  document.getElementById('recordMsg').textContent = isRecord
+    ? '★ NEW LOCAL RECORD ★'
+    : 'Local record: ' + fmtTime(best);
+  document.getElementById('gameOver').style.display = 'flex';
+}
+document.getElementById('restartBtn').addEventListener('click', initGame);
+
+/* =========================================================================
+ * MAIN LOOP
+ * ========================================================================= */
+let lastTime = performance.now();
+let tickAccum = 0;
+
+function frame(now){
+  const dt = Math.min(0.05, (now-lastTime)/1000);
+  lastTime = now;
+
+  if(!state.gameOver){
+    tickAccum += (now - (frame._lastTickCheck || now));
+    updateMovement(dt, now);
+    updateCamera(dt);
+  }
+  frame._lastTickCheck = now;
+
+  render();
+
+  // HUD
+  const elapsed = state.gameOver ? (frame._frozenElapsed ?? 0) : performance.now()-state.startedAt;
+  if(!state.gameOver) frame._frozenElapsed = elapsed;
+  document.getElementById('statTime').textContent = fmtTime(elapsed);
+  document.getElementById('statBest').textContent = fmtTime(Number(localStorage.getItem(RECORD_KEY)||0));
+  updateCurrencyPanel();
+  if(state.selectedId!=null) selectCharacter(state.selectedId);
+  refreshHireBar();
+
+  if(!state.gameOver){
+    checkMilestones(elapsed); // [TR 25]
+    if(!state.eventOpen && now >= state.nextEventAt) triggerRandomEvent(); // [FR 20]
+  }
+
+  requestAnimationFrame(frame);
+}
+
+// fixed-interval simulation tick, decoupled from requestAnimationFrame [TR 8]
+setInterval(simulationTick, CFG.TICK_MS);
+
+resizeCanvas();
+initGame();
+requestAnimationFrame(frame);
+    </script>
+</body>
+</html>

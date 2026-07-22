@@ -39,4 +39,5 @@ See [DoxOps](./.dox/DoxOps.md) for a description of available agents and related
 
 ## Writings
 
-- July 2026: *[Introducing Dox: a lean notation to guide solution design, inspired by Six Thinking Hats](./.pub/introducing-dox.md)* — [Hashnode](https://efchi.hashnode.dev/introducing-dox-a-lean-notation-to-guide-solution-design-inspired-by-six-thinking-hats)
+- July 2026: *[Introducing Dox: a lean notation to guide solution design, inspired by Six Thinking Hats](./.pub/introducing-dox/introducing-dox.md)* — [Hashnode](https://efchi.hashnode.dev/introducing-dox-a-lean-notation-to-guide-solution-design-inspired-by-six-thinking-hats), [Medium](https://medium.com/@efchi/introducing-dox-a-lean-notation-to-guide-solution-design-inspired-by-six-thinking-hats-0caa54ce528a)
+- July 2026: *[Vibecoding a browser-game PoC in less than 3 hours, aided by Dox](./.pub/vibecoding-bsj/vibecoding-bsj.md)*
