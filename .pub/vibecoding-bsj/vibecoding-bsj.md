@@ -14,7 +14,7 @@
 
 ## Introduction
 
-In the [previous article](https://github.com/efchi/dox9plus/blob/main/.pub/introducing-dox.md) I introduced **[Dox](https://github.com/efchi/dox9plus/tree/main)**, a notation I created to support AI-assisted specification for my hobby projects, aiming to keep some structure and control over requirements and design choices.
+In the [previous article](https://github.com/efchi/dox9plus/blob/main/.pub/introducing-dox/introducing-dox.md) I introduced **[Dox](https://github.com/efchi/dox9plus/tree/main)**, a notation I created to support AI-assisted specification for my hobby projects, aiming to keep some structure and control over requirements and design choices.
 
 These days, there is a lot of interest in how agents can solve technical problems through autonomous or automatic programming. The possibility of building anything without knowing how to code feels like magic, and is a real game changer for the industry and discipline in general.
 
@@ -159,4 +159,4 @@ To sum up, this methodology supports three main use cases:
 2. Keeping an informative context as a reference for incremental changes (or analysis of existing solutions);
 3. Establishing a means to keep control over the code LLMs produce.
 
-Thank you for reading this far! If you want to see how the underlying notation works, please check out the [introductory article](https://github.com/efchi/dox9plus/blob/main/.pub/introducing-dox.md). And if you try Dox on one of your own projects, let me know — I'd love to hear about it.
+Thank you for reading this far! If you want to see how the underlying notation works, please check out the [introductory article](https://github.com/efchi/dox9plus/blob/main/.pub/introducing-dox/introducing-dox.md). And if you try Dox on one of your own projects, let me know — I'd love to hear about it.
