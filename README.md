@@ -29,7 +29,7 @@ The latest version is [Dox v1.8.1](./.dox/Dox.md).
 
 The framework defines a maturity model — available in two variants, Top-Down and Bottom-Up — to calibrate documentation effort to the actual needs of a project, and to support incremental, agile solutioning.
 
-The latest version is [Dox9+ v1.0.4](./.dox/Dox9+.md).
+The latest version is [Dox9+ v1.0.5](./.dox/Dox9+.md).
 
 ### DoxOps Agents
 
@@ -39,5 +39,5 @@ See [DoxOps](./.dox/DoxOps.md) for a description of available agents and related
 
 ## Writings
 
-- July 2026: *[Introducing Dox: a lean notation to guide solution design, inspired by Six Thinking Hats](./.pub/introducing-dox/introducing-dox.md)* — [Hashnode](https://efchi.hashnode.dev/introducing-dox-a-lean-notation-to-guide-solution-design-inspired-by-six-thinking-hats), [Medium](https://medium.com/@efchi/introducing-dox-a-lean-notation-to-guide-solution-design-inspired-by-six-thinking-hats-0caa54ce528a)
-- July 2026: *[Vibecoding a browser-game PoC in less than 3 hours, aided by Dox](./.pub/vibecoding-bsj/vibecoding-bsj.md)* — [Hashnode](https://efchi.hashnode.dev/vibecoding-a-browser-game-poc-in-less-than-3-hours-aided-by-dox), [Medium](https://medium.com/@efchi/vibecoding-a-browser-game-poc-in-less-than-3-hours-aided-by-dox-1f62870c64c9)
+- July 2026: *[Introducing Dox: a lean notation to guide solution design, inspired by Six Thinking Hats](https://github.com/efchi/blog/blob/main/.pub/introducing-dox/introducing-dox.md)* — [Hashnode](https://efchi.hashnode.dev/introducing-dox-a-lean-notation-to-guide-solution-design-inspired-by-six-thinking-hats), [Medium](https://medium.com/@efchi/introducing-dox-a-lean-notation-to-guide-solution-design-inspired-by-six-thinking-hats-0caa54ce528a)
+- July 2026: *[Vibecoding a browser-game PoC in less than 3 hours, aided by Dox](https://github.com/efchi/blog/blob/main/.pub/vibecoding-bsj/vibecoding-bsj.md)* — [Hashnode](https://efchi.hashnode.dev/vibecoding-a-browser-game-poc-in-less-than-3-hours-aided-by-dox), [Medium](https://medium.com/@efchi/vibecoding-a-browser-game-poc-in-less-than-3-hours-aided-by-dox-1f62870c64c9)

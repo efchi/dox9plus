@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Template Version** | 1.0.4 |
+| **Template Version** | 1.0.5 |
 | **Dox Version** | [Dox v1.8.1](./Dox.md) |
 
 ## Table of Contents
@@ -37,7 +37,7 @@ Dox9+ is distributed under CC BY-SA 4.0 — see [LICENSE.md](./LICENSE.md) file.
 | **Team** | *Team Name* |
 | **SD Version** | *0.0.1* |
 | **SD Status** | *`Draft`* |
-| **Template Version** | *[Dox9+ v1.0.4](./Dox9+.md)* |
+| **Template Version** | *[Dox9+ v1.0.5](./Dox9+.md)* |
 | **Maturity Model** | *`Top-Down` `Bottom-Up`* |
 | **Current Maturity** | *Dox0* |
 | **Target Maturity** | *Dox9* |
@@ -831,15 +831,15 @@ Optional chapters (10–15, 3a, 4a) and even custom chapters can be added in any
 
 ### Summary Table
 
-| Level | OVE | BOM | TEV | INV | TST | TDR | PRV | BUV | GLO | RIX | CHL |
+| Level | OVE | GLO | BUV | PRV | TST | TEV | TDR | BOM | INV | RIX | CHL |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Dox0 | | | | | | | | | | | ✅ |
 | Dox1 | ✅ | | | | | | | | | | ✅ |
-| Dox2 | ✅ | ✅ | | | | | | | | | ✅ |
-| Dox3 | ✅ | ✅ | ✅ | | | | | | | | ✅ |
-| Dox4 | ✅ | ✅ | ✅ | ✅ | | | | | | | ✅ |
-| Dox5 | ✅ | ✅ | ✅ | ✅ | ✅ | | | | | ✅ | ✅ |
-| Dox6 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | | | | ✅ | ✅ |
-| Dox7 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | | | ✅ | ✅ |
-| Dox8 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | | ✅ | ✅ |
+| Dox2 | ✅ | | | | | | | ✅ | | | ✅ |
+| Dox3 | ✅ | | | | | ✅ | | ✅ | | | ✅ |
+| Dox4 | ✅ | | | | | ✅ | | ✅ | ✅ | | ✅ |
+| Dox5 | ✅ | | | | ✅ | ✅ | | ✅ | ✅ | ✅ | ✅ |
+| Dox6 | ✅ | | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Dox7 | ✅ | | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Dox8 | ✅ | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Dox9 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |

@@ -15,9 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | | |
 |-|-|
 | Dox	 | 1.8.1 |
-| Dox9+  | 1.0.4 |
+| Dox9+  | 1.0.5 |
 | DoxOps | 0.5.1 |
-| Repo	 | 1.0.3 |
+| Repo	 | 1.0.4 |
 
 <!--
 For reference:
@@ -33,10 +33,12 @@ For reference:
 
 | Date | Version | Description |
 |-|-|-|
+| 2026-09-18 | Dox9+ 1.0.5 | **Fixed**: reordered the columns of the Bottom-Up maturity Summary Table to follow the natural chapter order |
+| 2026-09-18 | Repo 1.0.4 | **Fixed**: minor documentation fixes |
 | 2026-08-04 | Repo 1.0.3 | **Changed**: refactored Changelog in tabular form |
 | 2026-08-04 | Repo 1.0.3 | **Removed** `.pub` folder: writings moved to [blog](https://efchi.github.io/blog) |
 | 2026-07-22 | Repo 1.0.2 | **Added** "Vibecoding BSJ" article; updated Writings section in README.md |
-| 2026-07-09 | DoxOps 1.0.1 | **Added** LICENSE.md into the dox-assistant.zip file |
-| 2026-07-09 | DoxOps 1.0.1 | **Changed**: improved Dox Assistant skill |
+| 2026-07-09 | DoxOps 0.5.1 | **Added** LICENSE.md into the dox-assistant.zip file |
+| 2026-07-09 | DoxOps 0.5.1 | **Changed**: improved Dox Assistant skill |
 | 2026-07-09 | Repo 1.0.1 | **Added** "Introducing Dox" article and Writings section in README.md |
 | 2026-07-09 | Repo 1.0.1 | **Added** Changelog.md |
